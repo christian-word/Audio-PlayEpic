@@ -1,4 +1,4 @@
-﻿[
+[
     {
         "name": "Avalon-Zero",
         "icon": "Music/Avalon-Zero/icon.jpg",
@@ -555,7 +555,7 @@
         "icon": "Music/Really Slow Motion/icon.jpg",
         "category": "epic",
         "tracks": [
-              {
+            {
                 "name": "Really Slow Motion  Giant Apes - Laniakea",
                 "url": "Music/Really Slow Motion/Really Slow Motion  Giant Apes - Laniakea.mp3",
                 "icon": null,
@@ -644,6 +644,132 @@
                 "url": "Music/Really Slow Motion/Really Slow Motion – Limitation (Full Mix).mp3",
                 "icon": null,
                 "duration": 133
+            }
+        ],
+        "zip": null
+    },
+    {
+        "name": "Alexandros Nikolaidis(Electro)",
+        "icon": "Music/Alexandros Nikolaidis(Electro)/icon.jpg",
+        "category": "music",
+        "tracks": [
+            {
+                "name": "Alexandros Nikolaidis - Flying Together ",
+                "url": "Music/Alexandros Nikolaidis(Electro)/Alexandros Nikolaidis - Flying Together .mp3",
+                "icon": null,
+                "duration": 169
+            },
+            {
+                "name": "Alexandros Nikolaidis - Love in Orbit ",
+                "url": "Music/Alexandros Nikolaidis(Electro)/Alexandros Nikolaidis - Love in Orbit .mp3",
+                "icon": null,
+                "duration": 148
+            },
+            {
+                "name": "Alexandros Nikolaidis - Moonlight Drive ",
+                "url": "Music/Alexandros Nikolaidis(Electro)/Alexandros Nikolaidis - Moonlight Drive .mp3",
+                "icon": null,
+                "duration": 155
+            }
+        ],
+        "zip": null
+    },
+    {
+        "name": "Alexandros Nikolaidis(Epic)",
+        "icon": "Music/Alexandros Nikolaidis(Epic)/icon.jpg",
+        "category": "music",
+        "tracks": [
+            {
+                "name": "Alexandros Nikolaidis - A Million Years Journey ",
+                "url": "Music/Alexandros Nikolaidis(Epic)/Alexandros Nikolaidis - A Million Years Journey .mp3",
+                "icon": null,
+                "duration": 193
+            },
+            {
+                "name": "Alexandros Nikolaidis - Ancestors ",
+                "url": "Music/Alexandros Nikolaidis(Epic)/Alexandros Nikolaidis - Ancestors .mp3",
+                "icon": null,
+                "duration": 188
+            },
+            {
+                "name": "Alexandros Nikolaidis - Andromeda ",
+                "url": "Music/Alexandros Nikolaidis(Epic)/Alexandros Nikolaidis - Andromeda .mp3",
+                "icon": null,
+                "duration": 189
+            },
+            {
+                "name": "Alexandros Nikolaidis - Astra Incognita ",
+                "url": "Music/Alexandros Nikolaidis(Epic)/Alexandros Nikolaidis - Astra Incognita .mp3",
+                "icon": null,
+                "duration": 190
+            },
+            {
+                "name": "Alexandros Nikolaidis - Dark Matter ",
+                "url": "Music/Alexandros Nikolaidis(Epic)/Alexandros Nikolaidis - Dark Matter .mp3",
+                "icon": null,
+                "duration": 127
+            }
+        ],
+        "zip": null
+    },
+    {
+        "name": "Amadea Music Productions",
+        "icon": "Music/Amadea Music Productions/icon.jpg",
+        "category": "music",
+        "tracks": [
+            {
+                "name": "Amadea Music Productions - Brave Heart",
+                "url": "Music/Amadea Music Productions/Amadea Music Productions - Brave Heart.mp3",
+                "icon": null,
+                "duration": 181
+            },
+            {
+                "name": "Amadea Music Productions - Dune",
+                "url": "Music/Amadea Music Productions/Amadea Music Productions - Dune.mp3",
+                "icon": null,
+                "duration": 239
+            },
+            {
+                "name": "Amadea Music Productions - Flow of Love",
+                "url": "Music/Amadea Music Productions/Amadea Music Productions - Flow of Love.mp3",
+                "icon": null,
+                "duration": 226
+            },
+            {
+                "name": "Amadea Music Productions - Fly",
+                "url": "Music/Amadea Music Productions/Amadea Music Productions - Fly.mp3",
+                "icon": null,
+                "duration": 187
+            },
+            {
+                "name": "Amadea Music Productions - Golden Sunrise",
+                "url": "Music/Amadea Music Productions/Amadea Music Productions - Golden Sunrise.mp3",
+                "icon": null,
+                "duration": 218
+            },
+            {
+                "name": "Amadea Music Productions - Legend of Valhalla",
+                "url": "Music/Amadea Music Productions/Amadea Music Productions - Legend of Valhalla.mp3",
+                "icon": null,
+                "duration": 177
+            },
+            {
+                "name": "Amadea Music Productions - Ocean Breeze",
+                "url": "Music/Amadea Music Productions/Amadea Music Productions - Ocean Breeze.mp3",
+                "icon": null,
+                "duration": 163
+            },
+            {
+                "name": "Amadea Music Productions - Rising World",
+                "url": "Music/Amadea Music Productions/Amadea Music Productions - Rising World.mp3",
+                "icon": null,
+                "duration": 179
+            },
+            {
+                "name": "Audiomachine - Birdsong",
+                "url": "Music/Amadea Music Productions/Audiomachine - Birdsong.mp3",
+                "icon": null,
+                "duration": 162
             }
         ],
         "zip": null
