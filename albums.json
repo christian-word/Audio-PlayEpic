@@ -651,7 +651,7 @@
     {
         "name": "Alexandros Nikolaidis(Electro)",
         "icon": "Music/Alexandros Nikolaidis(Electro)/icon.jpg",
-        "category": "music",
+        "category": "Electronic",
         "tracks": [
             {
                 "name": "Alexandros Nikolaidis - Flying Together ",
@@ -677,7 +677,7 @@
     {
         "name": "Alexandros Nikolaidis(Epic)",
         "icon": "Music/Alexandros Nikolaidis(Epic)/icon.jpg",
-        "category": "music",
+        "category": "epic",
         "tracks": [
             {
                 "name": "Alexandros Nikolaidis - A Million Years Journey ",
@@ -715,7 +715,7 @@
     {
         "name": "Amadea Music Productions",
         "icon": "Music/Amadea Music Productions/icon.jpg",
-        "category": "music",
+        "category": "epic",
         "tracks": [
             {
                 "name": "Amadea Music Productions - Brave Heart",
