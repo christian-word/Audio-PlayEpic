@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>Admin · Sound Audio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -443,51 +444,52 @@ async function uploadBinaryFile(filePath, arrayBuffer, sha = null, message = 'Up
     });
 }
 
-// ── Login ──
-document.getElementById('login-btn').onclick = async () => {
-    const token = document.getElementById('login-token').value.trim();
-    const repo  = document.getElementById('login-repo').value.trim();
-    const branch = document.getElementById('login-branch').value.trim() || 'main';
-    const errEl = document.getElementById('login-error');
-    errEl.style.display = 'none';
-
-    if (!token || !repo) { errEl.textContent = 'Заполни все поля'; errEl.style.display = 'block'; return; }
-
-    const btn = document.getElementById('login-btn');
-    btn.innerHTML = '<i class="fas fa-spinner spin"></i> Проверка...';
-    btn.disabled = true;
-
-    TOKEN = token; REPO = repo; BRANCH = branch;
-
-    try {
-        await ghFetch(`/repos/${REPO}`);
-        localStorage.setItem('sap_admin_token', token);
-        localStorage.setItem('sap_admin_repo', repo);
-        localStorage.setItem('sap_admin_branch', branch);
-        startAdmin();
-    } catch(e) {
-        errEl.textContent = 'Ошибка: ' + e.message;
-        errEl.style.display = 'block';
-        TOKEN = ''; REPO = ''; BRANCH = '';
-    } finally {
-        btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Войти';
-        btn.disabled = false;
-    }
-};
-
-// Auto-login from storage
+// ── All DOM wiring inside DOMContentLoaded ──
 window.addEventListener('DOMContentLoaded', () => {
-    // Wire all buttons safely after DOM is ready
+
+    document.getElementById('login-btn').onclick = async () => {
+        const token = document.getElementById('login-token').value.trim();
+        const repo  = document.getElementById('login-repo').value.trim();
+        const branch = document.getElementById('login-branch').value.trim() || 'main';
+        const errEl = document.getElementById('login-error');
+        errEl.style.display = 'none';
+
+        if (!token || !repo) { errEl.textContent = 'Заполни все поля'; errEl.style.display = 'block'; return; }
+
+        const btn = document.getElementById('login-btn');
+        btn.innerHTML = '<i class="fas fa-spinner spin"></i> Проверка...';
+        btn.disabled = true;
+
+        TOKEN = token; REPO = repo; BRANCH = branch;
+
+        try {
+            await ghFetch(`/repos/${REPO}`);
+            localStorage.setItem('sap_admin_token', token);
+            localStorage.setItem('sap_admin_repo', repo);
+            localStorage.setItem('sap_admin_branch', branch);
+            startAdmin();
+        } catch(e) {
+            errEl.textContent = 'Ошибка: ' + e.message;
+            errEl.style.display = 'block';
+            TOKEN = ''; REPO = ''; BRANCH = '';
+        } finally {
+            btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Войти';
+            btn.disabled = false;
+        }
+    };
+
     document.getElementById('logout-btn').onclick = () => {
-        localStorage.removeItem('sap_admin_token');
+        try { localStorage.removeItem('sap_admin_token'); } catch(e) {}
         TOKEN = ''; REPO = ''; BRANCH = '';
         albumsData = []; dirty = false;
         document.getElementById('main-screen').style.display = 'none';
         document.getElementById('login-screen').style.display = 'flex';
     };
+
     document.getElementById('add-album-btn').onclick = onAddAlbum;
     document.getElementById('save-btn').onclick = onSave;
     document.getElementById('discard-btn').onclick = onDiscard;
+
     document.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && e.key === 's' && dirty) {
             e.preventDefault();
@@ -496,15 +498,19 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // Auto-login from storage
-    const t = localStorage.getItem('sap_admin_token');
-    const r = localStorage.getItem('sap_admin_repo');
-    const b = localStorage.getItem('sap_admin_branch');
-    if (t && r) {
-        document.getElementById('login-token').value = t;
-        document.getElementById('login-repo').value = r;
-        document.getElementById('login-branch').value = b || 'main';
-        TOKEN = t; REPO = r; BRANCH = b || 'main';
-        startAdmin();
+    try {
+        const t = localStorage.getItem('sap_admin_token');
+        const r = localStorage.getItem('sap_admin_repo');
+        const b = localStorage.getItem('sap_admin_branch');
+        if (t && r) {
+            document.getElementById('login-token').value = t;
+            document.getElementById('login-repo').value = r;
+            document.getElementById('login-branch').value = b || 'main';
+            TOKEN = t; REPO = r; BRANCH = b || 'main';
+            startAdmin();
+        }
+    } catch(e) {
+        console.warn('localStorage недоступен:', e.message);
     }
 });
 
