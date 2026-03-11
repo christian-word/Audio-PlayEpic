@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin · Sound Audio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:      #090d18;
+            --surface: #0e1422;
+            --card:    #111928;
+            --border:  #1a2540;
+            --blue:    #4d8ef0;
+            --blue2:   #7eb0f7;
+            --text:    #dce8ff;
+            --muted:   #4d6490;
+            --dim:     #1a2b4a;
+            --red:     #e05555;
+            --green:   #3ecf72;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Login screen ── */
+        #login-screen {
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        .login-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 2.5rem 2rem;
+            width: 100%; max-width: 400px;
+            text-align: center;
+        }
+        .login-box .lock-icon {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--dim); display: flex; align-items: center;
+            justify-content: center; margin: 0 auto 1.5rem;
+            color: var(--blue); font-size: 1.4rem;
+        }
+        .login-box h1 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.3rem; }
+        .login-box p { color: var(--muted); font-size: 0.82rem; font-family: 'Share Tech Mono', monospace; letter-spacing: 0.1em; margin-bottom: 2rem; }
+        .field-label { display: block; text-align: left; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; letter-spacing: 0.05em; text-transform: uppercase; }
+        .field-input {
+            width: 100%; padding: 0.8rem 1rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 9px; color: var(--text); font-size: 0.9rem;
+            font-family: 'DM Sans', sans-serif; outline: none; margin-bottom: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .field-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(77,142,240,.12); }
+        .field-input::placeholder { color: var(--muted); }
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem; border: none; border-radius: 9px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+            cursor: pointer; transition: all 0.18s;
+        }
+        .btn-primary { background: var(--blue); color: #060914; width: 100%; justify-content: center; }
+        .btn-primary:hover { background: var(--blue2); }
+        .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--muted); }
+        .btn-danger { background: rgba(224,85,85,.15); color: var(--red); border: 1px solid rgba(224,85,85,.2); }
+        .btn-danger:hover { background: rgba(224,85,85,.25); }
+        .btn-success { background: rgba(62,207,114,.15); color: var(--green); border: 1px solid rgba(62,207,114,.2); }
+        .btn-success:hover { background: rgba(62,207,114,.25); }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 7px; }
+        .login-error { color: var(--red); font-size: 0.82rem; margin-top: 0.75rem; display: none; }
+
+        /* ── Main layout ── */
+        #main-screen { display: none; }
+        .topbar {
+            background: var(--card); border-bottom: 1px solid var(--border);
+            padding: 0.9rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 0.75rem; }
+        .topbar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; }
+        .topbar-badge {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
+            background: var(--dim); color: var(--blue); padding: 0.2rem 0.5rem;
+            border-radius: 4px; letter-spacing: 0.1em;
+        }
+        .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+        .repo-label { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        /* ── Save bar ── */
+        .save-bar {
+            background: rgba(77,142,240,.1); border: 1px solid rgba(77,142,240,.25);
+            border-radius: 10px; padding: 0.85rem 1.2rem;
+            display: none; align-items: center; justify-content: space-between;
+            margin-bottom: 1.5rem; gap: 1rem;
+        }
+        .save-bar.visible { display: flex; }
+        .save-bar span { font-size: 0.85rem; color: var(--blue2); }
+        .save-bar-btns { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+        /* ── Albums list ── */
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .section-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+
+        .album-item {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden;
+        }
+        .album-item-header {
+            display: flex; align-items: center; gap: 0.9rem;
+            padding: 0.9rem 1rem; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .album-item-header:hover { background: var(--surface); }
+        .album-thumb {
+            width: 44px; height: 44px; border-radius: 7px; object-fit: cover; flex-shrink: 0;
+        }
+        .album-thumb-placeholder {
+            width: 44px; height: 44px; border-radius: 7px; background: var(--dim);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--blue); font-size: 1.1rem; flex-shrink: 0;
+        }
+        .album-item-info { flex: 1; min-width: 0; }
+        .album-item-name { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .album-item-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+        .album-item-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+        .chevron { color: var(--muted); transition: transform 0.2s; font-size: 0.8rem; flex-shrink: 0; }
+        .album-item.open .chevron { transform: rotate(180deg); }
+
+        /* Album editor (expanded) */
+        .album-editor { display: none; padding: 0 1rem 1rem; border-top: 1px solid var(--border); }
+        .album-item.open .album-editor { display: block; }
+        .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 1rem 0 0.75rem; }
+        @media(max-width:600px) { .editor-grid { grid-template-columns: 1fr; } }
+        .field-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        .field-group label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .field-group input, .field-group select {
+            padding: 0.6rem 0.8rem; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 7px;
+            color: var(--text); font-size: 0.85rem; font-family: 'DM Sans', sans-serif;
+            outline: none; transition: border-color 0.2s;
+        }
+        .field-group input:focus, .field-group select:focus { border-color: var(--blue); }
+        .field-group select option { background: var(--surface); }
+
+        /* Tracks inside album */
+        .tracks-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin: 1rem 0 0.5rem;
+        }
+        .tracks-title { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+        .track-row {
+            display: grid; grid-template-columns: 2fr 2fr 1fr 58px auto;
+            gap: 0.5rem; align-items: center; margin-bottom: 0.4rem;
+        }
+        @media(max-width:700px) { .track-row { grid-template-columns: 1fr 58px auto; } .track-row .tr-url, .track-row .tr-icon { display: none; } }
+        .track-row input {
+            padding: 0.5rem 0.7rem; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 7px;
+            color: var(--text); font-size: 0.82rem; font-family: 'DM Sans', sans-serif;
+            outline: none; width: 100%;
+            transition: border-color 0.2s;
+        }
+        .track-row input:focus { border-color: var(--blue); }
+        .track-row input.changed { border-color: var(--blue); }
+        .drag-handle { color: var(--dim); cursor: grab; padding: 0 0.2rem; font-size: 0.8rem; }
+        .drag-handle:active { cursor: grabbing; }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 2px dashed var(--border); border-radius: 10px;
+            padding: 1.5rem 1rem; text-align: center; margin-top: 0.75rem;
+            cursor: pointer; transition: border-color 0.2s, background 0.2s;
+            color: var(--muted); font-size: 0.85rem;
+        }
+        .upload-zone:hover, .upload-zone.dragover { border-color: var(--blue); background: rgba(77,142,240,.05); color: var(--blue2); }
+        .upload-zone i { display: block; font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .upload-progress { margin-top: 0.75rem; display: none; }
+        .progress-item { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.3rem; font-size: 0.78rem; color: var(--muted); }
+        .progress-item .bar { flex: 1; height: 3px; background: var(--dim); border-radius: 2px; overflow: hidden; }
+        .progress-item .bar-fill { height: 100%; background: var(--blue); border-radius: 2px; width: 0%; transition: width 0.3s; }
+        .progress-item .status { min-width: 60px; text-align: right; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+            padding: 0.8rem 1.2rem; border-radius: 10px;
+            font-size: 0.85rem; display: flex; align-items: center; gap: 0.6rem;
+            transform: translateY(80px); opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+            max-width: 320px;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: rgba(62,207,114,.15); border: 1px solid rgba(62,207,114,.3); color: var(--green); }
+        .toast.error   { background: rgba(224,85,85,.15); border: 1px solid rgba(224,85,85,.3); color: var(--red); }
+        .toast.info    { background: rgba(77,142,240,.15); border: 1px solid rgba(77,142,240,.3); color: var(--blue2); }
+
+        /* Spinner inline */
+        .spin { animation: spin .7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+        .empty-state i { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+
+        /* Confirm dialog */
+        .overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,.6);
+            display: none; align-items: center; justify-content: center;
+            z-index: 200; padding: 1rem;
+        }
+        .overlay.show { display: flex; }
+        .dialog {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 2rem; max-width: 380px; width: 100%;
+            text-align: center;
+        }
+        .dialog h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .dialog p { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .dialog-btns { display: flex; gap: 0.5rem; justify-content: center; }
+
+        .divider { height: 1px; background: var(--border); margin: 1rem 0; }
+
+        /* Per-album upload zone */
+        .album-upload-zone {
+            border: 2px dashed var(--border); border-radius: 10px;
+            padding: 1.1rem 1rem; text-align: center; margin-top: 1rem;
+            cursor: pointer; transition: border-color 0.2s, background 0.2s;
+            color: var(--muted); font-size: 0.82rem; line-height: 1.6;
+        }
+        .album-upload-zone:hover, .album-upload-zone.dragover {
+            border-color: var(--blue); background: rgba(77,142,240,.05); color: var(--blue2);
+        }
+        .album-upload-zone i { font-size: 1.3rem; margin-bottom: 0.35rem; display: block; }
+        .album-upload-progress { margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+    <div class="login-box">
+        <div class="lock-icon"><i class="fas fa-shield-halved"></i></div>
+        <h1>Sound Audio</h1>
+        <p>ADMIN PANEL · SUMY-2026</p>
+
+        <label class="field-label">Репозиторий (owner/repo)</label>
+        <input class="field-input" id="login-repo" type="text" placeholder="christian-word/Audio-PlayEpic" value="christian-word/Audio-PlayEpic">
+
+        <label class="field-label">Ветка</label>
+        <input class="field-input" id="login-branch" type="text" placeholder="main" value="main">
+
+        <label class="field-label">GitHub Token (Personal Access Token)</label>
+        <input class="field-input" id="login-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+
+        <button class="btn btn-primary" id="login-btn">
+            <i class="fas fa-arrow-right-to-bracket"></i> Войти
+        </button>
+        <div class="login-error" id="login-error"></div>
+    </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div id="main-screen">
+    <div class="topbar">
+        <div class="topbar-left">
+            <span class="topbar-logo">Sound Audio</span>
+            <span class="topbar-badge">ADMIN</span>
+            <span class="repo-label" id="topbar-repo"></span>
+        </div>
+        <div class="topbar-right">
+            <a href="index.html" class="btn btn-secondary btn-sm" target="_blank">
+                <i class="fas fa-arrow-up-right-from-square"></i> Плеер
+            </a>
+            <button class="btn btn-secondary btn-sm" id="logout-btn">
+                <i class="fas fa-right-from-bracket"></i> Выйти
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- Save bar -->
+        <div class="save-bar" id="save-bar">
+            <span><i class="fas fa-circle-dot" style="color:var(--blue);margin-right:.4rem"></i>Есть несохранённые изменения</span>
+            <div class="save-bar-btns">
+                <button class="btn btn-secondary btn-sm" id="discard-btn">Отменить</button>
+                <button class="btn btn-primary btn-sm" id="save-btn">
+                    <i class="fas fa-cloud-arrow-up"></i> Сохранить в GitHub
+                </button>
+            </div>
+        </div>
+
+        <!-- Albums -->
+        <div class="section-header">
+            <span class="section-title">Альбомы</span>
+            <button class="btn btn-primary btn-sm" id="add-album-btn">
+                <i class="fas fa-plus"></i> Добавить альбом
+            </button>
+        </div>
+
+        <div id="albums-list">
+            <div class="empty-state">
+                <i class="fas fa-spinner spin"></i>
+                Загрузка...
+            </div>
+        </div>
+
+        <div style="height:3rem"></div>
+
+    </div>
+</div>
+
+<!-- Confirm dialog -->
+<div class="overlay" id="confirm-overlay">
+    <div class="dialog">
+        <h3 id="confirm-title">Удалить?</h3>
+        <p id="confirm-text">Это действие нельзя отменить.</p>
+        <div class="dialog-btns">
+            <button class="btn btn-secondary" id="confirm-cancel">Отмена</button>
+            <button class="btn btn-danger" id="confirm-ok">Удалить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Config ──
+let TOKEN = '', REPO = '', BRANCH = '';
+let albumsData = [];
+let albumsSha = '';
+let dirty = false;
+
+const API = 'https://api.github.com';
+
+// ── Helpers ──
+function toast(msg, type = 'info', duration = 3000) {
+    const el = document.getElementById('toast');
+    el.className = `toast ${type}`;
+    el.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':type==='error'?'circle-exclamation':'circle-info'}"></i> ${msg}`;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), duration);
+}
+
+function confirm(title, text, okLabel = 'Удалить') {
+    return new Promise(resolve => {
+        document.getElementById('confirm-title').textContent = title;
+        document.getElementById('confirm-text').textContent = text;
+        document.getElementById('confirm-ok').textContent = okLabel;
+        document.getElementById('confirm-overlay').classList.add('show');
+        const ok = document.getElementById('confirm-ok');
+        const cancel = document.getElementById('confirm-cancel');
+        const cleanup = (val) => {
+            document.getElementById('confirm-overlay').classList.remove('show');
+            ok.onclick = null; cancel.onclick = null;
+            resolve(val);
+        };
+        ok.onclick = () => cleanup(true);
+        cancel.onclick = () => cleanup(false);
+    });
+}
+
+function markDirty() {
+    dirty = true;
+    document.getElementById('save-bar').classList.add('visible');
+}
+
+function markClean() {
+    dirty = false;
+    document.getElementById('save-bar').classList.remove('visible');
+}
+
+function imgUrl(path) {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    return `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`;
+}
+
+// ── GitHub API ──
+async function ghFetch(path, opts = {}) {
+    const res = await fetch(`${API}${path}`, {
+        ...opts,
+        headers: {
+            'Authorization': `Bearer ${TOKEN}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            ...(opts.headers || {})
+        }
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `HTTP ${res.status}`);
+    }
+    return res.json();
+}
+
+async function getFile(filePath) {
+    return ghFetch(`/repos/${REPO}/contents/${filePath}?ref=${BRANCH}`);
+}
+
+async function putFile(filePath, content, sha, message) {
+    return ghFetch(`/repos/${REPO}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            message,
+            content: btoa(unescape(encodeURIComponent(content))),
+            sha,
+            branch: BRANCH
+        })
+    });
+}
+
+async function uploadBinaryFile(filePath, arrayBuffer, sha = null, message = 'Upload file') {
+    const bytes = new Uint8Array(arrayBuffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    const b64 = btoa(binary);
+    const body = { message, content: b64, branch: BRANCH };
+    if (sha) body.sha = sha;
+    return ghFetch(`/repos/${REPO}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+}
+
+// ── Login ──
+document.getElementById('login-btn').onclick = async () => {
+    const token = document.getElementById('login-token').value.trim();
+    const repo  = document.getElementById('login-repo').value.trim();
+    const branch = document.getElementById('login-branch').value.trim() || 'main';
+    const errEl = document.getElementById('login-error');
+    errEl.style.display = 'none';
+
+    if (!token || !repo) { errEl.textContent = 'Заполни все поля'; errEl.style.display = 'block'; return; }
+
+    const btn = document.getElementById('login-btn');
+    btn.innerHTML = '<i class="fas fa-spinner spin"></i> Проверка...';
+    btn.disabled = true;
+
+    TOKEN = token; REPO = repo; BRANCH = branch;
+
+    try {
+        await ghFetch(`/repos/${REPO}`);
+        localStorage.setItem('sap_admin_token', token);
+        localStorage.setItem('sap_admin_repo', repo);
+        localStorage.setItem('sap_admin_branch', branch);
+        startAdmin();
+    } catch(e) {
+        errEl.textContent = 'Ошибка: ' + e.message;
+        errEl.style.display = 'block';
+        TOKEN = ''; REPO = ''; BRANCH = '';
+    } finally {
+        btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Войти';
+        btn.disabled = false;
+    }
+};
+
+// Auto-login from storage
+window.addEventListener('DOMContentLoaded', () => {
+    const t = localStorage.getItem('sap_admin_token');
+    const r = localStorage.getItem('sap_admin_repo');
+    const b = localStorage.getItem('sap_admin_branch');
+    if (t && r) {
+        document.getElementById('login-token').value = t;
+        document.getElementById('login-repo').value = r;
+        document.getElementById('login-branch').value = b || 'main';
+        TOKEN = t; REPO = r; BRANCH = b || 'main';
+        startAdmin();
+    }
+});
+
+document.getElementById('logout-btn').onclick = () => {
+    localStorage.removeItem('sap_admin_token');
+    TOKEN = ''; REPO = ''; BRANCH = '';
+    albumsData = []; dirty = false;
+    document.getElementById('main-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+};
+
+// ── Start Admin ──
+async function startAdmin() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-screen').style.display = 'block';
+    document.getElementById('topbar-repo').textContent = `${REPO} / ${BRANCH}`;
+    await loadAlbums();
+}
+
+// ── Load albums.json ──
+async function loadAlbums() {
+    const list = document.getElementById('albums-list');
+    list.innerHTML = '<div class="empty-state"><i class="fas fa-spinner spin"></i>Загрузка albums.json...</div>';
+    try {
+        const file = await getFile('albums.json');
+        albumsSha = file.sha;
+        albumsData = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\n/g,'')))));
+        renderAlbumsList();
+        markClean();
+    } catch(e) {
+        if (e.message.includes('404') || e.message.includes('Not Found')) {
+            albumsData = [];
+            albumsSha = '';
+            list.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i>albums.json не найден — создай первый альбом</div>';
+        } else {
+            list.innerHTML = `<div class="empty-state" style="color:var(--red)"><i class="fas fa-triangle-exclamation"></i>${e.message}</div>`;
+        }
+    }
+}
+
+// ── Render albums list ──
+function renderAlbumsList() {
+    const list = document.getElementById('albums-list');
+    if (!albumsData.length) {
+        list.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i>Альбомов пока нет. Добавь первый!</div>';
+        return;
+    }
+    list.innerHTML = '';
+    albumsData.forEach((album, ai) => {
+        const item = document.createElement('div');
+        item.className = 'album-item';
+        item.dataset.index = ai;
+
+        const thumbSrc = imgUrl(album.icon);
+        const thumbHTML = thumbSrc
+            ? `<img class="album-thumb" src="${thumbSrc}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+              + `<div class="album-thumb-placeholder" style="display:none"><i class="fas fa-music"></i></div>`
+            : `<div class="album-thumb-placeholder"><i class="fas fa-music"></i></div>`;
+
+        item.innerHTML = `
+        <div class="album-item-header">
+            ${thumbHTML}
+            <div class="album-item-info">
+                <div class="album-item-name">${album.name || 'Без названия'}</div>
+                <div class="album-item-meta">${(album.tracks||[]).length} треков · ${album.category||'—'}</div>
+            </div>
+            <div class="album-item-actions">
+                <button class="btn btn-danger btn-sm del-album-btn" data-idx="${ai}" title="Удалить альбом">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <div class="album-editor">
+            <div class="editor-grid">
+                <div class="field-group">
+                    <label>Название альбома</label>
+                    <input type="text" class="al-name" value="${album.name||''}" placeholder="Название">
+                </div>
+                <div class="field-group">
+                    <label>Категория</label>
+                    <input type="text" class="al-category" value="${album.category||''}" placeholder="Electronic, Epic...">
+                </div>
+                <div class="field-group">
+                    <label>Путь к обложке (icon)</label>
+                    <input type="text" class="al-icon" value="${album.icon||''}" placeholder="Music/Название/icon.jpg">
+                </div>
+                <div class="field-group">
+                    <label>Путь к ZIP (zip)</label>
+                    <input type="text" class="al-zip" value="${album.zip||''}" placeholder="Music/Название/album.zip">
+                </div>
+            </div>
+
+            <div class="tracks-header">
+                <span class="tracks-title">Треки</span>
+                <button class="btn btn-secondary btn-sm add-track-btn" data-idx="${ai}">
+                    <i class="fas fa-plus"></i> Добавить трек
+                </button>
+            </div>
+            <div class="track-row" style="margin-bottom:.25rem;padding:0 0 .25rem;border-bottom:1px solid var(--border)">
+                <span style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Название</span>
+                <span style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Путь к MP3</span>
+                <span style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Icon</span>
+                <span style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Сек</span>
+                <span></span>
+            </div>
+            <div class="tracks-list">
+                ${(album.tracks||[]).map((t,ti) => renderTrackRow(t, ai, ti)).join('')}
+            </div>
+
+            <div class="album-upload-zone" data-ai="${ai}">
+                <i class="fas fa-cloud-arrow-up"></i>
+                Перетащи <strong>MP3</strong> сюда — треки добавятся автоматически.<br>
+                <span style="font-size:.75rem;color:var(--muted)">Или перетащи <strong>icon.jpg / icon.png</strong> — обложка подставится.</span>
+                <input type="file" class="album-file-input" multiple accept="audio/*,image/*" style="display:none">
+            </div>
+            <div class="album-upload-progress"></div>
+        </div>`;
+
+        // Toggle open
+        item.querySelector('.album-item-header').addEventListener('click', (e) => {
+            if (e.target.closest('.del-album-btn')) return;
+            item.classList.toggle('open');
+        });
+
+        // Delete album
+        item.querySelector('.del-album-btn').addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const ok = await confirm('Удалить альбом?', `"${album.name}" и все его треки будут удалены из списка.`);
+            if (!ok) return;
+            albumsData.splice(ai, 1);
+            markDirty();
+            renderAlbumsList();
+        });
+
+        // Field changes
+        const watchField = (sel, key) => {
+            item.querySelector(sel).addEventListener('input', (e) => {
+                albumsData[ai][key] = e.target.value;
+                item.querySelector('.album-item-name').textContent = albumsData[ai].name || 'Без названия';
+                item.querySelector('.album-item-meta').textContent = `${(albumsData[ai].tracks||[]).length} треков · ${albumsData[ai].category||'—'}`;
+                markDirty();
+            });
+        };
+        watchField('.al-name', 'name');
+        watchField('.al-category', 'category');
+        watchField('.al-icon', 'icon');
+        watchField('.al-zip', 'zip');
+
+        // Add track
+        item.querySelector('.add-track-btn').addEventListener('click', () => {
+            if (!albumsData[ai].tracks) albumsData[ai].tracks = [];
+            albumsData[ai].tracks.push({ name: '', url: '', icon: null, duration: 0 });
+            markDirty();
+            refreshTracksList(item, ai);
+        });
+
+        bindTrackEvents(item, ai);
+        bindAlbumUpload(item, ai);
+
+        list.appendChild(item);
+    });
+}
+
+function renderTrackRow(track, ai, ti) {
+    return `<div class="track-row" data-ti="${ti}">
+        <input type="text" class="tr-name" value="${track.name||''}" placeholder="Название трека">
+        <input type="text" class="tr-url" value="${track.url||''}" placeholder="Music/Альбом/трек.mp3">
+        <input type="text" class="tr-icon" value="${track.icon||''}" placeholder="icon (или пусто)">
+        <input type="text" class="tr-dur" value="${track.duration||''}" placeholder="сек" style="width:58px">
+        <button class="btn btn-danger btn-sm del-track-btn" data-ti="${ti}" title="Удалить трек"><i class="fas fa-times"></i></button>
+    </div>`;
+}
+
+function refreshTracksList(item, ai) {
+    const tl = item.querySelector('.tracks-list');
+    tl.innerHTML = (albumsData[ai].tracks||[]).map((t,ti) => renderTrackRow(t,ai,ti)).join('');
+    item.querySelector('.album-item-meta').textContent = `${albumsData[ai].tracks.length} треков · ${albumsData[ai].category||'—'}`;
+    bindTrackEvents(item, ai);
+}
+
+function bindTrackEvents(item, ai) {
+    item.querySelectorAll('.track-row').forEach(row => {
+        const ti = parseInt(row.dataset.ti);
+
+        row.querySelector('.tr-name').addEventListener('input', e => {
+            albumsData[ai].tracks[ti].name = e.target.value; markDirty();
+        });
+        const urlField = row.querySelector('.tr-url');
+        if (urlField) urlField.addEventListener('input', e => {
+            albumsData[ai].tracks[ti].url = e.target.value; markDirty();
+        });
+        const iconField = row.querySelector('.tr-icon');
+        if (iconField) iconField.addEventListener('input', e => {
+            albumsData[ai].tracks[ti].icon = e.target.value || null; markDirty();
+        });
+        row.querySelector('.tr-dur').addEventListener('input', e => {
+            albumsData[ai].tracks[ti].duration = parseFloat(e.target.value)||0; markDirty();
+        });
+        row.querySelector('.del-track-btn').addEventListener('click', async () => {
+            const ok = await confirm('Удалить трек?', `"${albumsData[ai].tracks[ti].name||'Без названия'}" будет удалён.`);
+            if (!ok) return;
+            albumsData[ai].tracks.splice(ti, 1);
+            markDirty();
+            refreshTracksList(item, ai);
+        });
+    });
+}
+
+// ── Add album ──
+document.getElementById('add-album-btn').onclick = () => {
+    albumsData.push({ name: 'Новый альбом', category: '', icon: '', zip: '', tracks: [] });
+    markDirty();
+    renderAlbumsList();
+    // open last item
+    const items = document.querySelectorAll('.album-item');
+    if (items.length) {
+        const last = items[items.length - 1];
+        last.classList.add('open');
+        last.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
+
+// ── Save to GitHub ──
+document.getElementById('save-btn').onclick = async () => {
+    const btn = document.getElementById('save-btn');
+    btn.innerHTML = '<i class="fas fa-spinner spin"></i> Сохранение...';
+    btn.disabled = true;
+    try {
+        const json = JSON.stringify(albumsData, null, 2);
+        const result = await putFile(
+            'albums.json', json, albumsSha || undefined,
+            `Admin: update albums.json [${new Date().toLocaleString('ru')}]`
+        );
+        albumsSha = result.content.sha;
+        markClean();
+        toast('Сохранено в GitHub! ✓', 'success');
+    } catch(e) {
+        toast('Ошибка сохранения: ' + e.message, 'error', 5000);
+    } finally {
+        btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Сохранить в GitHub';
+        btn.disabled = false;
+    }
+};
+
+// ── Discard changes ──
+document.getElementById('discard-btn').onclick = async () => {
+    const ok = await confirm('Отменить изменения?', 'Все несохранённые изменения будут потеряны.', 'Отменить');
+    if (!ok) return;
+    await loadAlbums();
+};
+
+// ── Per-album smart upload ──
+function albumFolder(ai) {
+    // Derive folder from album icon path, or from album name
+    const album = albumsData[ai];
+    if (album.icon) {
+        // "Music/Avalon-Zero/icon.jpg" → "Music/Avalon-Zero"
+        const parts = album.icon.split('/');
+        parts.pop();
+        return parts.join('/');
+    }
+    // Fallback: sanitize album name
+    return 'Music/' + (album.name || 'NewAlbum').replace(/[\/:*?"<>|]/g, '_');
+}
+
+function guessTrackName(filename) {
+    // Strip extension and clean up
+    return filename.replace(/\.[^.]+$/, '').trim();
+}
+
+function isImageFile(name) {
+    return /\.(jpg|jpeg|png|webp|gif)$/i.test(name);
+}
+function isAudioFile(name) {
+    return /\.(mp3|flac|ogg|wav|m4a|aac)$/i.test(name);
+}
+
+function bindAlbumUpload(item, ai) {
+    const zone = item.querySelector('.album-upload-zone');
+    const fileInput = item.querySelector('.album-file-input');
+    const progressDiv = item.querySelector('.album-upload-progress');
+
+    zone.addEventListener('click', () => fileInput.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        handleAlbumFiles([...e.dataTransfer.files], ai, item, progressDiv);
+    });
+    fileInput.addEventListener('change', () => {
+        handleAlbumFiles([...fileInput.files], ai, item, progressDiv);
+        fileInput.value = '';
+    });
+}
+
+async function handleAlbumFiles(files, ai, item, progressDiv) {
+    if (!files.length) return;
+    const folder = albumFolder(ai);
+    progressDiv.innerHTML = '';
+    progressDiv.style.display = 'block';
+
+    const addedTracks = [];
+
+    for (const file of files) {
+        const repoPath = `${folder}/${file.name}`;
+        const row = document.createElement('div');
+        row.className = 'progress-item';
+        row.innerHTML = `
+            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem">${file.name}</span>
+            <div class="bar"><div class="bar-fill"></div></div>
+            <span class="status" style="min-width:70px;text-align:right;font-size:.75rem">Загрузка...</span>`;
+        progressDiv.appendChild(row);
+        const barEl = row.querySelector('.bar-fill');
+        const statusEl = row.querySelector('.status');
+
+        try {
+            let existingSha = null;
+            try { existingSha = (await getFile(repoPath)).sha; } catch(e) {}
+
+            barEl.style.width = '40%';
+            const buf = await file.arrayBuffer();
+            barEl.style.width = '70%';
+            await uploadBinaryFile(repoPath, buf, existingSha, `Upload: ${file.name}`);
+            barEl.style.width = '100%';
+            barEl.style.background = 'var(--green)';
+            statusEl.textContent = '✓ Готово';
+            statusEl.style.color = 'var(--green)';
+
+            // Auto-add track or icon
+            if (isAudioFile(file.name)) {
+                addedTracks.push({ name: guessTrackName(file.name), url: repoPath, icon: null, duration: 0 });
+            } else if (isImageFile(file.name)) {
+                // Set as album icon if name contains "icon" or album has no icon yet
+                if (!albumsData[ai].icon || file.name.toLowerCase().includes('icon')) {
+                    albumsData[ai].icon = repoPath;
+                    item.querySelector('.al-icon').value = repoPath;
+                    markDirty();
+                    statusEl.textContent = '✓ Обложка';
+                }
+            }
+        } catch(e) {
+            barEl.style.background = 'var(--red)';
+            statusEl.textContent = '✗ Ошибка';
+            statusEl.style.color = 'var(--red)';
+            statusEl.title = e.message;
+        }
+    }
+
+    // Add all audio tracks to album
+    if (addedTracks.length) {
+        if (!albumsData[ai].tracks) albumsData[ai].tracks = [];
+        albumsData[ai].tracks.push(...addedTracks);
+        markDirty();
+        refreshTracksList(item, ai);
+        toast(`Добавлено ${addedTracks.length} трек(ов) в альбом`, 'success');
+    }
+}
+
+// ── Keyboard save ──
+document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's' && dirty) {
+        e.preventDefault();
+        document.getElementById('save-btn').click();
+    }
+});
+</script>
+</body>
+</html>
