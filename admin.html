@@ -477,6 +477,25 @@ document.getElementById('login-btn').onclick = async () => {
 
 // Auto-login from storage
 window.addEventListener('DOMContentLoaded', () => {
+    // Wire all buttons safely after DOM is ready
+    document.getElementById('logout-btn').onclick = () => {
+        localStorage.removeItem('sap_admin_token');
+        TOKEN = ''; REPO = ''; BRANCH = '';
+        albumsData = []; dirty = false;
+        document.getElementById('main-screen').style.display = 'none';
+        document.getElementById('login-screen').style.display = 'flex';
+    };
+    document.getElementById('add-album-btn').onclick = onAddAlbum;
+    document.getElementById('save-btn').onclick = onSave;
+    document.getElementById('discard-btn').onclick = onDiscard;
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's' && dirty) {
+            e.preventDefault();
+            document.getElementById('save-btn').click();
+        }
+    });
+
+    // Auto-login from storage
     const t = localStorage.getItem('sap_admin_token');
     const r = localStorage.getItem('sap_admin_repo');
     const b = localStorage.getItem('sap_admin_branch');
@@ -489,13 +508,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-document.getElementById('logout-btn').onclick = () => {
-    localStorage.removeItem('sap_admin_token');
-    TOKEN = ''; REPO = ''; BRANCH = '';
-    albumsData = []; dirty = false;
-    document.getElementById('main-screen').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex';
-};
+// logout-btn wired inside DOMContentLoaded below
 
 // ── Start Admin ──
 async function startAdmin() {
@@ -696,7 +709,9 @@ function bindTrackEvents(item, ai) {
 }
 
 // ── Add album ──
-document.getElementById('add-album-btn').onclick = () => {
+// add-album-btn wired inside DOMContentLoaded
+// (defined as named function, called below)
+function onAddAlbum() {
     albumsData.push({ name: 'Новый альбом', category: '', icon: '', zip: '', tracks: [] });
     markDirty();
     renderAlbumsList();
@@ -710,7 +725,7 @@ document.getElementById('add-album-btn').onclick = () => {
 };
 
 // ── Save to GitHub ──
-document.getElementById('save-btn').onclick = async () => {
+async function onSave() {
     const btn = document.getElementById('save-btn');
     btn.innerHTML = '<i class="fas fa-spinner spin"></i> Сохранение...';
     btn.disabled = true;
@@ -732,7 +747,7 @@ document.getElementById('save-btn').onclick = async () => {
 };
 
 // ── Discard changes ──
-document.getElementById('discard-btn').onclick = async () => {
+async function onDiscard() {
     const ok = await confirm('Отменить изменения?', 'Все несохранённые изменения будут потеряны.', 'Отменить');
     if (!ok) return;
     await loadAlbums();
@@ -783,6 +798,20 @@ function bindAlbumUpload(item, ai) {
     });
 }
 
+// Read audio duration in browser via AudioContext
+function getAudioDuration(file) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const audio = new Audio();
+        audio.addEventListener('loadedmetadata', () => {
+            URL.revokeObjectURL(url);
+            resolve(isFinite(audio.duration) ? audio.duration : 0);
+        });
+        audio.addEventListener('error', () => { URL.revokeObjectURL(url); reject(new Error('decode error')); });
+        audio.src = url;
+    });
+}
+
 async function handleAlbumFiles(files, ai, item, progressDiv) {
     if (!files.length) return;
     const folder = albumFolder(ai);
@@ -818,7 +847,12 @@ async function handleAlbumFiles(files, ai, item, progressDiv) {
 
             // Auto-add track or icon
             if (isAudioFile(file.name)) {
-                addedTracks.push({ name: guessTrackName(file.name), url: repoPath, icon: null, duration: 0 });
+                // Read real duration via Web Audio API before pushing
+                let duration = 0;
+                try {
+                    duration = await getAudioDuration(file);
+                } catch(e) {}
+                addedTracks.push({ name: guessTrackName(file.name), url: repoPath, icon: null, duration: Math.round(duration) });
             } else if (isImageFile(file.name)) {
                 // Set as album icon if name contains "icon" or album has no icon yet
                 if (!albumsData[ai].icon || file.name.toLowerCase().includes('icon')) {
@@ -847,12 +881,7 @@ async function handleAlbumFiles(files, ai, item, progressDiv) {
 }
 
 // ── Keyboard save ──
-document.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's' && dirty) {
-        e.preventDefault();
-        document.getElementById('save-btn').click();
-    }
-});
+// keydown wired inside DOMContentLoaded
 </script>
 </body>
 </html>
