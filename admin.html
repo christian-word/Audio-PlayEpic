@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>Admin · Sound Audio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <style>
         :root {
             --bg:      #090d18;
@@ -446,6 +446,14 @@ async function uploadBinaryFile(filePath, arrayBuffer, sha = null, message = 'Up
 
 // ── All DOM wiring inside DOMContentLoaded ──
 window.addEventListener('DOMContentLoaded', () => {
+    // Debug: check all required elements exist
+    ['login-btn','logout-btn','add-album-btn','save-btn','discard-btn',
+     'login-token','login-repo','login-branch','login-error',
+     'main-screen','login-screen','topbar-repo','albums-list','save-bar',
+     'confirm-overlay','confirm-title','confirm-text','confirm-ok','confirm-cancel','toast'
+    ].forEach(id => {
+        if (!document.getElementById(id)) console.error('MISSING ELEMENT: #' + id);
+    });
 
     document.getElementById('login-btn').onclick = async () => {
         const token = document.getElementById('login-token').value.trim();
@@ -531,7 +539,7 @@ async function loadAlbums() {
     try {
         const file = await getFile('albums.json');
         albumsSha = file.sha;
-        albumsData = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\n/g,'')))));
+        albumsData = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(file.content.replace(/\s/g,'')), c => c.charCodeAt(0))));
         renderAlbumsList();
         markClean();
     } catch(e) {
