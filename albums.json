@@ -1,5 +1,22 @@
 [
     {
+        "name": "Сборник2",
+        "category": "epic",
+        "icon": "",
+        "tracks": [
+            {
+                "name": "Addicted Noise - Anabiosis ",
+                "url": "Music/Сборник2/Addicted Noise - Anabiosis .mp3",
+                "duration": 75
+            },
+            {
+                "name": "Really Slow Motion - From Memory (Epic Uplifting Emotional Orchestral)",
+                "url": "Music/Сборник2/Really Slow Motion - From Memory (Epic Uplifting Emotional Orchestral).m4a",
+                "duration": 190
+            }
+        ]
+    },
+    {
         "name": "Avalon-Zero",
         "icon": "Music/Avalon-Zero/icon.jpg",
         "category": "epic",
