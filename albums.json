@@ -1,5 +1,17 @@
 [
     {
+        "name": "Сборник",
+        "category": "epic",
+        "icon": "",
+        "tracks": [
+            {
+                "name": "Really Slow Motion - From Memory (Epic Uplifting Emotional Orchestral).m4a",
+                "url": "Music/Новый Альбом/Really Slow Motion - From Memory (Epic Uplifting Emotional Orchestral).m4a",
+                "duration": 190
+            }
+        ]
+    },
+    {
         "name": "Avalon-Zero",
         "icon": "Music/Avalon-Zero/icon.jpg",
         "category": "epic",
