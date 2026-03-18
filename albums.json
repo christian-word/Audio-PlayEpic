@@ -5,6 +5,11 @@
         "icon": "Music/My Travel/icon.jpg",
         "tracks": [
             {
+                "name": "Stonepath - Epic Cinematic Music for Film & Video  Audioknap",
+                "url": "Music/My Travel/Stonepath - Epic Cinematic Music for Film & Video  Audioknap.m4a",
+                "duration": 168
+            },
+            {
                 "name": "Emotional Cinematic Background Music For Videos - My Land by AudioknapMusic",
                 "url": "Music/My Travel/Emotional Cinematic Background Music For Videos - My Land by AudioknapMusic.m4a",
                 "duration": 144
@@ -28,11 +33,6 @@
                 "name": "Inspiring & Uplifting Cinematic Background Music For Videos  My Travel",
                 "url": "Music/My Travel/Inspiring & Uplifting Cinematic Background Music For Videos  My Travel.m4a",
                 "duration": 143
-            },
-            {
-                "name": "Stonepath - Epic Cinematic Music for Film & Video  Audioknap",
-                "url": "Music/My Travel/Stonepath - Epic Cinematic Music for Film & Video  Audioknap.m4a",
-                "duration": 168
             },
             {
                 "name": "Cinematic Background Music For Videos - Breath of Nature ",
